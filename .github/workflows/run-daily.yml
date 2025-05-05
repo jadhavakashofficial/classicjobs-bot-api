@@ -32,4 +32,5 @@ jobs:
         WORDPRESS_SITE: ${{ secrets.WORDPRESS_SITE }}
         WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
         WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+        CLASSIC_TECH_YT_CHANNEL: ${{ secrets.CLASSIC_TECH_YT_CHANNEL }}
       run: python bot_api/run_daily_job.py
