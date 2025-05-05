@@ -12,6 +12,7 @@ from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
 from utils.load_env import OPENAI_API_KEY
 from bot_api.helpers.classicjobs_api import search_classicjobs_posts
+from bot_api.helpers.classictech_youtube import fetch_classictech_video
 
 # 🧠 Load training logs
 def load_docs(folder="bot_training_logs"):
@@ -67,6 +68,7 @@ async def ask_bot(q: Question, request: Request):
     with open("logs/public_queries.txt", "a", encoding="utf-8") as f:
         f.write(q.message.strip() + "\n")
 
+    # Ask context if not collected
     if client_id not in user_context:
         user_context[client_id] = {"step": "ask_context"}
         return {
@@ -83,13 +85,18 @@ async def ask_bot(q: Question, request: Request):
         user_context[client_id]["step"] = "ready"
         return {"response": "Thanks! Now go ahead and ask your question."}
 
-    # Run the bot with context
+    # Run bot with user context
     full_prompt = f"User background: {user_context[client_id]['context']}\nQuestion: {q.message}"
     answer = bot.run(full_prompt)
 
-    # Fetch matching ClassicJobs post
+    # Add ClassicJobs post link
     title, link = search_classicjobs_posts(q.message)
     if title and link:
         answer += f"\n\n🔗 Related job on ClassicJobs.in:\n[{title}]({link})"
+
+    # Add Classic Technology YouTube link
+    yt_title, yt_link = fetch_classictech_video(q.message)
+    if yt_title and yt_link:
+        answer += f"\n\n▶️ Watch on Classic Technology YouTube:\n[{yt_title}]({yt_link})"
 
     return {"response": answer}
