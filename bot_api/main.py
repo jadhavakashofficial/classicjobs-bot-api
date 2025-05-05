@@ -21,7 +21,7 @@ def load_docs(folder="bot_training_logs"):
             docs.extend(loader.load())
     return docs
 
-# 🔍 Build searchable knowledge base
+# 🔍 Build knowledge base
 def build_bot():
     docs = load_docs()
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -38,13 +38,13 @@ def build_bot():
         return_source_documents=False
     )
 
-# 🚀 Start FastAPI server
+# 🚀 Start FastAPI app
 app = FastAPI()
 
-# Allow public frontend access (like classicjobs.in)
+# Allow frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict this to your domain later
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,11 +55,38 @@ bot = build_bot()
 class Question(BaseModel):
     message: str
 
-# 🔄 Endpoint for public questions
+# ✅ User session data
+user_context = {}
+
 @app.post("/ask")
-async def ask_bot(q: Question):
+async def ask_bot(q: Question, request: Request):
+    client_id = request.client.host
+
+    # Save query log
     os.makedirs("logs", exist_ok=True)
     with open("logs/public_queries.txt", "a", encoding="utf-8") as f:
         f.write(q.message.strip() + "\n")
-    answer = bot.run(q.message)
+
+    # First-time user: ask for background
+    if client_id not in user_context:
+        user_context[client_id] = {"step": "ask_context"}
+        return {
+            "response": (
+                "Before I assist you, please tell me:\n"
+                "1. Your highest qualification\n"
+                "2. Companies you've applied to\n"
+                "3. Any interview questions you've faced"
+            )
+        }
+
+    # Second message: save background
+    if user_context[client_id]["step"] == "ask_context":
+        user_context[client_id]["context"] = q.message.strip()
+        user_context[client_id]["step"] = "ready"
+        return {"response": "Thanks! Now go ahead and ask your question."}
+
+    # User already gave context: now answer
+    full_prompt = f"User background: {user_context[client_id]['context']}\nQuestion: {q.message}"
+    answer = bot.run(full_prompt)
+
     return {"response": answer}
