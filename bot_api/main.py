@@ -63,15 +63,15 @@ class Question(BaseModel):
 user_context = {}
 
 # Keywords for conditional links
-JOB_LINK_KEYWORDS   = ["link", "apply", "website", "url"]
-VIDEO_KEYWORDS      = ["video", "watch", "yt", "youtube"]
+JOB_LINK_KEYWORDS   = ["link", "apply", "website", "url", "classicjobs"]
+VIDEO_KEYWORDS      = ["video", "watch", "yt", "youtube", "classic technology"]
 NEGATIVE_KEYWORDS   = ["no", "not interested", "skip", "don’t want", "dont want"]
 
 @app.post("/ask")
 async def ask_bot(q: Question, request: Request):
     client_id = request.client.host
-    user_msg   = q.message.strip()
-    lower      = user_msg.lower()
+    user_msg = q.message.strip()
+    lower = user_msg.lower()
 
     # 1️⃣ Log every incoming query
     os.makedirs("logs", exist_ok=True)
@@ -103,7 +103,7 @@ async def ask_bot(q: Question, request: Request):
                 )
             }
         user_context[client_id]["context"] = user_msg
-        user_context[client_id]["step"]    = "ready"
+        user_context[client_id]["step"] = "ready"
         return {"response": "Thanks! Now type your question and I'll help you right away."}
 
     # 4️⃣ Build the brand-aligned prompt
@@ -117,7 +117,7 @@ async def ask_bot(q: Question, request: Request):
 
     # 5️⃣ Fallback if vague
     if not answer or answer.strip().lower() in [
-        "i don't know","sorry","not sure","unknown","no idea"
+        "i don't know", "sorry", "not sure", "unknown", "no idea"
     ]:
         answer = (
             "Currently, there’s no official update on this. "
@@ -137,7 +137,6 @@ async def ask_bot(q: Question, request: Request):
             answer += f"\n\n▶️ Watch on Classic Technology YouTube:\n[{yt_title}]({yt_link})"
 
     return {"response": answer}
-
 
 # 🧠 Content Idea Generation Endpoint
 @app.get("/ideas")
