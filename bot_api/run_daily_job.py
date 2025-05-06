@@ -1,6 +1,11 @@
 import os
+import sys
 import requests
 from youtube_transcript_api import YouTubeTranscriptApi
+
+# ✅ Fix for relative import to work on GitHub Actions
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from utils.load_env import *
 from wordpress_draft_creator.create_drafts import create_wordpress_drafts
 from youtube_scraper.fetch_latest_videos import fetch_latest_video_info
@@ -8,6 +13,7 @@ from youtube_scraper.fetch_comments import fetch_comments
 from competitor_scraper.fetch_jobs_from_apis import fetch_competitor_jobs
 from youtube_scraper.analyze_and_classify import classify_transcript
 
+# Ensure log folder exists
 os.makedirs("bot_training_logs", exist_ok=True)
 
 def clean_text(text):
