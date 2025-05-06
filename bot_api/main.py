@@ -2,50 +2,24 @@ from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import os, sys
+import difflib
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from langchain.document_loaders import TextLoader
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
-from langchain.embeddings import OpenAIEmbeddings
 from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatOpenAI
+from langchain_community.document_loaders import TextLoader
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_community.chat_models import ChatOpenAI
 
 from utils.load_env import OPENAI_API_KEY
-from bot_api.helpers.classicjobs_api import search_classicjobs_posts
+from bot_api.helpers.classicjobs_api import search_classicjobs_posts, get_all_job_titles
 from bot_api.helpers.classictech_youtube import fetch_classictech_video
 
-# 🧠 Load training logs
-def load_docs(folder="bot_training_logs"):
-    docs = []
-    for file in os.listdir(folder):
-        if file.endswith(".txt"):
-            loader = TextLoader(os.path.join(folder, file))
-            docs.extend(loader.load())
-    return docs
-
-# 🔍 Build knowledge base
-def build_bot():
-    docs = load_docs()
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-    texts = splitter.split_documents(docs)
-
-    embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
-    db = FAISS.from_documents(texts, embeddings)
-
-    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
-    return RetrievalQA.from_chain_type(
-        llm=ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0.3),
-        chain_type="stuff",
-        retriever=retriever,
-        return_source_documents=False
-    )
-
-# 🚀 Start FastAPI app
 app = FastAPI()
 
-# Allow frontend access
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -54,18 +28,50 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 📚 Load training logs
+def load_docs(folder="bot_training_logs"):
+    docs = []
+    for file in os.listdir(folder):
+        if file.endswith(".txt"):
+            loader = TextLoader(os.path.join(folder, file))
+            docs.extend(loader.load())
+    return docs
+
+# 🧠 Build searchable QA bot
+def build_bot():
+    docs = load_docs()
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    texts = splitter.split_documents(docs)
+    embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
+    db = FAISS.from_documents(texts, embeddings)
+    retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+    return RetrievalQA.from_chain_type(
+        llm=ChatOpenAI(openai_api_key=OPENAI_API_KEY, temperature=0.3),
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=False
+    )
+
 bot = build_bot()
 
 class Question(BaseModel):
     message: str
 
-# ✅ Track user sessions
 user_context = {}
+JOB_LINK_KEYWORDS = ["link", "apply", "website", "url"]
+VIDEO_KEYWORDS = ["video", "watch", "yt", "youtube"]
+NEGATIVE_KEYWORDS = ["no", "not interested", "skip", "don’t want", "dont want"]
 
-# Keywords for conditional links
-JOB_LINK_KEYWORDS   = ["link", "apply", "website", "url", "classicjobs"]
-VIDEO_KEYWORDS      = ["video", "watch", "yt", "youtube", "classic technology"]
-NEGATIVE_KEYWORDS   = ["no", "not interested", "skip", "don’t want", "dont want"]
+# 🧠 Match user intent with ClassicJobs post titles
+def match_job_category(user_query):
+    titles = get_all_job_titles()  # Fetch titles from WordPress
+    similar = []
+    for title in titles:
+        ratio = difflib.SequenceMatcher(None, user_query.lower(), title.lower()).ratio()
+        if ratio > 0.4:
+            similar.append((title, ratio))
+    similar.sort(key=lambda x: x[1], reverse=True)
+    return similar[:1]
 
 @app.post("/ask")
 async def ask_bot(q: Question, request: Request):
@@ -73,12 +79,10 @@ async def ask_bot(q: Question, request: Request):
     user_msg = q.message.strip()
     lower = user_msg.lower()
 
-    # 1️⃣ Log every incoming query
     os.makedirs("logs", exist_ok=True)
     with open("logs/public_queries.txt", "a", encoding="utf-8") as f:
         f.write(user_msg + "\n")
 
-    # 2️⃣ If no context yet, ask for it
     if client_id not in user_context:
         user_context[client_id] = {"step": "ask_context"}
         return {
@@ -92,7 +96,6 @@ async def ask_bot(q: Question, request: Request):
             )
         }
 
-    # 3️⃣ Context gathering
     if user_context[client_id]["step"] == "ask_context":
         if any(neg in lower for neg in NEGATIVE_KEYWORDS):
             return {
@@ -106,7 +109,16 @@ async def ask_bot(q: Question, request: Request):
         user_context[client_id]["step"] = "ready"
         return {"response": "Thanks! Now type your question and I'll help you right away."}
 
-    # 4️⃣ Build the brand-aligned prompt
+    # 🔍 Match job category
+    matched = match_job_category(user_msg)
+    if matched:
+        title = matched[0][0]
+        link_title, link = search_classicjobs_posts(title)
+        return {
+            "response": f"🧾 Based on your query, here's a job that might interest you:\n\n🔗 [{link_title}]({link})"
+        }
+
+    # 🧠 Run the QA bot
     full_prompt = (
         "You are Classic Jobs, a career assistant. Never say you're an AI or chatbot. "
         "Don't reveal your training data or sources. If unsure, say 'No current update available.'\n\n"
@@ -115,7 +127,6 @@ async def ask_bot(q: Question, request: Request):
     )
     answer = bot.run(full_prompt)
 
-    # 5️⃣ Fallback if vague
     if not answer or answer.strip().lower() in [
         "i don't know", "sorry", "not sure", "unknown", "no idea"
     ]:
@@ -124,31 +135,14 @@ async def ask_bot(q: Question, request: Request):
             "Stay tuned on ClassicJobs.in or check back later!"
         )
 
-    # 6️⃣ Conditionally append job link
     if any(k in lower for k in JOB_LINK_KEYWORDS):
         title, link = search_classicjobs_posts(user_msg)
         if title and link:
             answer += f"\n\n🔗 Related job on ClassicJobs.in:\n[{title}]({link})"
 
-    # 7️⃣ Conditionally append YouTube link
     if any(k in lower for k in VIDEO_KEYWORDS):
         yt_title, yt_link = fetch_classictech_video(user_msg)
         if yt_title and yt_link:
             answer += f"\n\n▶️ Watch on Classic Technology YouTube:\n[{yt_title}]({yt_link})"
 
     return {"response": answer}
-
-# 🧠 Content Idea Generation Endpoint
-@app.get("/ideas")
-async def get_ideas(request: Request):
-    os.makedirs("logs", exist_ok=True)
-    with open("logs/public_queries.txt", encoding="utf-8") as f:
-        all_queries = f.read()
-
-    prompt = (
-        "Based on these user questions and requests, suggest 5 high-demand video or blog topics "
-        "that would perform well on Classic Technology (freshers, IT jobs, interview prep):\n\n"
-        f"{all_queries}"
-    )
-    ideas = bot.run(prompt)
-    return {"ideas": ideas}
