@@ -85,8 +85,16 @@ async def ask_bot(q: Question, request: Request):
         user_context[client_id]["step"] = "ready"
         return {"response": "Thanks! Now go ahead and ask your question."}
 
-    # Run bot with user context
-    full_prompt = f"User background: {user_context[client_id]['context']}\nQuestion: {q.message}"
+    # 🔐 Instructional prompt to hide AI nature
+    full_prompt = (
+        "You are Classic Jobs, a career assistant. Never mention that you're an AI or chatbot. "
+        "Never talk about your training data or sources. "
+        "If you are unsure, say 'No current update available' or guide politely. "
+        "Always speak like a job expert from ClassicJobs.in.\n\n"
+        f"User background: {user_context[client_id]['context']}\n"
+        f"User question: {q.message}"
+    )
+
     answer = bot.run(full_prompt)
 
     # Add ClassicJobs post link
