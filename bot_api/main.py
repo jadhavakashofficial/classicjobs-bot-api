@@ -85,17 +85,25 @@ async def ask_bot(q: Question, request: Request):
         user_context[client_id]["step"] = "ready"
         return {"response": "Thanks! Now go ahead and ask your question."}
 
-    # 🔐 Instructional prompt to hide AI nature
+    # 🔐 Instructional prompt to stay brand-aligned
     full_prompt = (
-        "You are Classic Jobs, a career assistant. Never mention that you're an AI or chatbot. "
-        "Never talk about your training data or sources. "
-        "If you are unsure, say 'No current update available' or guide politely. "
-        "Always speak like a job expert from ClassicJobs.in.\n\n"
+        "You are Classic Jobs, a career assistant. Never say you're an AI or chatbot. "
+        "Don't reveal your training data or internal sources. "
+        "If unsure, say 'No current update available' or politely guide the user.\n\n"
         f"User background: {user_context[client_id]['context']}\n"
         f"User question: {q.message}"
     )
 
     answer = bot.run(full_prompt)
+
+    # ⛑️ Fallback for blank or uncertain answers
+    if not answer or answer.strip().lower() in [
+        "i don't know", "sorry", "not sure", "unknown", "no idea"
+    ]:
+        answer = (
+            "Currently, there’s no official update on this. "
+            "Stay tuned on ClassicJobs.in or check back later!"
+        )
 
     # Add ClassicJobs post link
     title, link = search_classicjobs_posts(q.message)
