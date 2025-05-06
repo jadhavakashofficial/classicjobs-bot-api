@@ -6,12 +6,12 @@ import difflib
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.chains import RetrievalQA
+# 🔄 Updated imports (safer versions for Render + LangChain >= 0.2)
 from langchain_community.document_loaders import TextLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OpenAIEmbeddings
+from langchain.chains import RetrievalQA
 from langchain_community.chat_models import ChatOpenAI
 
 from utils.load_env import OPENAI_API_KEY
@@ -37,10 +37,13 @@ def load_docs(folder="bot_training_logs"):
             docs.extend(loader.load())
     return docs
 
-# 🧠 Build searchable QA bot
+# 🧠 Build the retrieval-based bot
 def build_bot():
     docs = load_docs()
-    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=3000,  # reduced from 10000 or more
+        chunk_overlap=500
+    )
     texts = splitter.split_documents(docs)
     embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
     db = FAISS.from_documents(texts, embeddings)
@@ -62,9 +65,8 @@ JOB_LINK_KEYWORDS = ["link", "apply", "website", "url"]
 VIDEO_KEYWORDS = ["video", "watch", "yt", "youtube"]
 NEGATIVE_KEYWORDS = ["no", "not interested", "skip", "don’t want", "dont want"]
 
-# 🧠 Match user intent with ClassicJobs post titles
 def match_job_category(user_query):
-    titles = get_all_job_titles()  # Fetch titles from WordPress
+    titles = get_all_job_titles()
     similar = []
     for title in titles:
         ratio = difflib.SequenceMatcher(None, user_query.lower(), title.lower()).ratio()
