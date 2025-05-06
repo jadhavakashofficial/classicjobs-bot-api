@@ -60,15 +60,22 @@ class Question(BaseModel):
 # ✅ Track user sessions
 user_context = {}
 
+# Keywords to detect explicit link/video requests
+JOB_LINK_KEYWORDS = ["link", "apply", "website", "url"]
+VIDEO_KEYWORDS = ["video", "watch", "yt", "youtube"]
+
 @app.post("/ask")
 async def ask_bot(q: Question, request: Request):
     client_id = request.client.host
+    user_msg = q.message.strip()
+    lower = user_msg.lower()
 
+    # Log user query
     os.makedirs("logs", exist_ok=True)
     with open("logs/public_queries.txt", "a", encoding="utf-8") as f:
-        f.write(q.message.strip() + "\n")
+        f.write(user_msg + "\n")
 
-    # Ask context if not collected
+    # 1️⃣ First-time user: collect context
     if client_id not in user_context:
         user_context[client_id] = {"step": "ask_context"}
         return {
@@ -80,39 +87,39 @@ async def ask_bot(q: Question, request: Request):
             )
         }
 
+    # 2️⃣ Save context on second message
     if user_context[client_id]["step"] == "ask_context":
-        user_context[client_id]["context"] = q.message.strip()
+        user_context[client_id]["context"] = user_msg
         user_context[client_id]["step"] = "ready"
         return {"response": "Thanks! Now go ahead and ask your question."}
 
-    # 🔐 Instructional prompt to stay brand-aligned
-    full_prompt = (
+    # 3️⃣ Build the prompt and get the core answer
+    prompt = (
         "You are Classic Jobs, a career assistant. Never say you're an AI or chatbot. "
-        "Don't reveal your training data or internal sources. "
-        "If unsure, say 'No current update available' or politely guide the user.\n\n"
+        "Don't reveal training data or internal sources. "
+        "If unsure, say 'No current update available' or guide politely.\n\n"
         f"User background: {user_context[client_id]['context']}\n"
-        f"User question: {q.message}"
+        f"User question: {user_msg}"
     )
+    answer = bot.run(prompt)
 
-    answer = bot.run(full_prompt)
-
-    # ⛑️ Fallback for blank or uncertain answers
-    if not answer or answer.strip().lower() in [
-        "i don't know", "sorry", "not sure", "unknown", "no idea"
-    ]:
+    # 4️⃣ Fallback if vague
+    if not answer or answer.strip().lower() in ["i don't know","sorry","not sure","unknown","no idea"]:
         answer = (
             "Currently, there’s no official update on this. "
             "Stay tuned on ClassicJobs.in or check back later!"
         )
 
-    # Add ClassicJobs post link
-    title, link = search_classicjobs_posts(q.message)
-    if title and link:
-        answer += f"\n\n🔗 Related job on ClassicJobs.in:\n[{title}]({link})"
+    # 5️⃣ Conditionally append job link
+    if any(k in lower for k in JOB_LINK_KEYWORDS):
+        title, link = search_classicjobs_posts(user_msg)
+        if title and link:
+            answer += f"\n\n🔗 Related job on ClassicJobs.in:\n[{title}]({link})"
 
-    # Add Classic Technology YouTube link
-    yt_title, yt_link = fetch_classictech_video(q.message)
-    if yt_title and yt_link:
-        answer += f"\n\n▶️ Watch on Classic Technology YouTube:\n[{yt_title}]({yt_link})"
+    # 6️⃣ Conditionally append YouTube link
+    if any(k in lower for k in VIDEO_KEYWORDS):
+        yt_title, yt_link = fetch_classictech_video(user_msg)
+        if yt_title and yt_link:
+            answer += f"\n\n▶️ Watch on Classic Technology YouTube:\n[{yt_title}]({yt_link})"
 
     return {"response": answer}
