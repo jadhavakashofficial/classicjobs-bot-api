@@ -1,0 +1,27 @@
+<div class="cj-ideas-container">
+    <h2>💡 Your Next Content Ideas</h2>
+    <div id="cjIdeas" style="padding:1rem; background:#fff; border:1px solid #eee; border-radius:8px;">
+      Loading ideas…
+    </div>
+  </div>
+  
+  <style>
+    .cj-ideas-container { max-width:600px; margin:2rem auto; font-family:Arial,sans-serif; }
+    .cj-ideas-container h2 { color:#111; text-align:center; }
+    .cj-ideas-container ul { padding-left:1.2rem; }
+  </style>
+  
+  <script>
+  (async () => {
+    try {
+      const res = await fetch("https://classicjobs-bot-api.onrender.com/ideas");
+      const data = await res.json();
+      const items = data.ideas.split("\n").filter(line => line.trim());
+      const list = items.map(i => `<li>${i}</li>`).join("");
+      document.getElementById("cjIdeas").innerHTML = `<ul>${list}</ul>`;
+    } catch (e) {
+      document.getElementById("cjIdeas").innerText = "Error loading ideas.";
+    }
+  })();
+  </script>
+  

@@ -1,0 +1,134 @@
+<div class="cj-chat-container">
+    <header class="cj-chat-header">
+      <span>💬 Ask Classic Jobs Bot</span>
+    </header>
+    <div class="cj-chat-log" id="cjChatLog"></div>
+    <div class="cj-chat-input">
+      <input id="cjUserInput" type="text" placeholder="Type your question here…" />
+      <button id="cjSendBtn">Ask</button>
+    </div>
+  </div>
+  
+  <style>
+    .cj-chat-container {
+      max-width: 480px;
+      margin: 2rem auto;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      font-family: Arial, sans-serif;
+    }
+    .cj-chat-header {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #111;
+    }
+    .cj-chat-log {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .cj-chat-bubble {
+      max-width: 80%;
+      margin: 0.5rem 0;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      line-height: 1.4;
+    }
+    .cj-chat-bubble.user {
+      background: #f0f0f0;
+      color: #111;
+      align-self: flex-end;
+    }
+    .cj-chat-bubble.bot {
+      background: #fafafa;
+      color: #111;
+      border-left: 3px solid #d62828;
+      align-self: flex-start;
+    }
+    .cj-chat-input {
+      display: flex;
+      border-top: 1px solid #eee;
+    }
+    #cjUserInput {
+      flex: 1;
+      border: none;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      outline: none;
+    }
+    #cjSendBtn {
+      background: #d62828;
+      border: none;
+      color: #fff;
+      padding: 0 1.2rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    #cjSendBtn:disabled {
+      opacity: 0.6;
+      cursor: default;
+    }
+    a.cj-link {
+      color: #d62828;
+      text-decoration: none;
+    }
+    @media (max-width: 600px) {
+      .cj-chat-container { margin: 1rem; }
+      .cj-chat-bubble { max-width: 100%; }
+    }
+  </style>
+  
+  <script>
+    const logEl = document.getElementById("cjChatLog");
+    const inputEl = document.getElementById("cjUserInput");
+    const btnEl = document.getElementById("cjSendBtn");
+  
+    function appendBubble(text, sender) {
+      const div = document.createElement("div");
+      div.className = `cj-chat-bubble ${sender}`;
+      div.innerHTML = text.replace(
+        /(https?:\/\/[^\s]+)/g,
+        match => `<a class="cj-link" href="${match}" target="_blank">${match}</a>`
+      );
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  
+    async function sendMessage() {
+      const msg = inputEl.value.trim();
+      if (!msg) return;
+      appendBubble(msg, "user");
+      inputEl.value = "";
+      btnEl.disabled = true;
+  
+      appendBubble("…", "bot");  // placeholder
+      try {
+        const res = await fetch("https://classicjobs-bot-api.onrender.com/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        // remove placeholder
+        logEl.lastChild.remove();
+        appendBubble(data.response, "bot");
+      } catch (e) {
+        logEl.lastChild.remove();
+        appendBubble("Error connecting to the server.", "bot");
+      }
+      btnEl.disabled = false;
+    }
+  
+    btnEl.addEventListener("click", sendMessage);
+    inputEl.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+  

@@ -6,10 +6,11 @@ import requests
 from utils.load_env import COMPETITOR_JOB_APIS
 from bs4 import BeautifulSoup
 
+# ✅ Clean HTML tags from content
 def clean_html(raw_html):
-    """Removes HTML tags from job content."""
     return BeautifulSoup(raw_html, "html.parser").get_text(separator=" ", strip=True)
 
+# ✅ Main function to fetch top 2 posts per API
 def fetch_jobs_from_all_apis():
     all_jobs = []
 
@@ -27,7 +28,7 @@ def fetch_jobs_from_all_apis():
             response = requests.get(api_url.strip(), headers=headers, timeout=10)
             if response.status_code == 200:
                 posts = response.json()
-                for post in posts[:2]:  # Get top 2 per site
+                for post in posts[:2]:  # Limit to 2 per site
                     title = post.get("title", {}).get("rendered", "No Title")
                     link = post.get("link", "No Link")
                     content_raw = post.get("content", {}).get("rendered", "")
@@ -44,10 +45,10 @@ def fetch_jobs_from_all_apis():
 
     return all_jobs
 
-# Optional test run
+# 🔍 Optional manual test
 if __name__ == "__main__":
     jobs = fetch_jobs_from_all_apis()
     for job in jobs:
         print(f"\n{job['title']}")
         print(f"🔗 {job['link']}")
-        print(f"📝 {job['content'][:200]}...")  # Preview 200 chars
+        print(f"📝 {job['content'][:200]}...")
