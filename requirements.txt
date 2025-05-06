@@ -1,9 +1,30 @@
-fastapi
-uvicorn
+# 🧠 Core AI Tools
 openai
 langchain
 langchain-community
-faiss-cpu
 tiktoken
+faiss-cpu
+
+# 🌐 Web & FastAPI
+fastapi
+uvicorn
 python-dotenv
+requests
+
+# 🧪 YouTube Tools
 youtube-transcript-api
+google-api-python-client
+
+# 🧹 Scraping & HTML parsing
+beautifulsoup4
+aiohttp
+
+# 📦 WordPress Integration
+requests-toolbelt
+
+# 🧱 JSON handling
+dataclasses-json
+
+# 👨‍💻 Render & GitHub actions safe
+httpx
+pydantic
