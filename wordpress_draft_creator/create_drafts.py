@@ -7,7 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import requests
 from requests.auth import HTTPBasicAuth
 from utils.load_env import WORDPRESS_SITE, WORDPRESS_USER, WORDPRESS_APP_PASSWORD
-from competitor_scraper.fetch_jobs_from_all_apis import fetch_jobs_from_all_apis
+from competitor_scraper.fetch_jobs_from_apis import fetch_jobs_from_all_apis
 
 # ✅ Fetch all existing post titles (drafts + published)
 def fetch_existing_titles():
