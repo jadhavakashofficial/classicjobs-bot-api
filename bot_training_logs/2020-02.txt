@@ -1,0 +1,84 @@
+=== Infosys Off-Campus Drive | Registration Process | for 2017, 2018, 2019, and 2020 Graduates ===
+https://youtube.com/watch?v=McPrL-j4HvM
+
+Transcript:
+hello everyone and I welcome all of you to online study for you what is step solution for all your placement needs friends in my today's video I am going to talk about they'll forces off-campus strive for the student those who have graduated in seventeen eighteen nineteen and those who are going to graduate in 2020 so friends this is a golden opportunity for all the student and friends remember opportunity does not knock the door always so friends utilize this opportunity by enforcing so friends today we will be talking about the exam pattern eligibility criteria before that friends if you have not subscribed to our Channel please do subscribe so you'll be able to get the update whenever we upload any of campus or on-campus drives so friends eligible degrees so be be take em II am take MCA and MSE are the eligible degrees now friends in ve-be take em e and MPEG all streams are eligible but in MCA and MSC the eligible disciplines are maths physics information technology statical science and electronics now friends exam pattern so exam pattern will have written round followed by technical round and then followed by HR interview so friends in written test you will have aptitude and will have programming so friends in Infosys you will be getting gripped arithmetic problems then will have technical round friends and then HR around now friends how to apply so friends this link will be given in description so if you click on this link it will take you to this page now friends here you can fill your details so you can fill your name and then mobile number and friends in your email id then your date of birth okay and then friends so here 10th standard percentage or CGPA so friends if we have person then you fill in percentage or if you have cgpm then you fill 8.5 or whatever CGPA you have similar way friends 4/12 you have to fill and then if you'll come down friends graduation so degree so you have to select your degree from this and then friends name of the college so you have to select the name of the college so almost all the college prints they have listed down here so no need to worry friends so all the college almost has been listed down and graduating states of which state you have done your graduation and friends your branch so you can select your branch and then again percentage if you if your max is in percentage fill percentage or see GPA friends and then the year of completion so when did you complete your graduation so friends you can see from here also it is so enforces drive is four seventeen eighteen nineteen and two thousand twenty students okay now now friends if you come down you have to submit it so after filling all the details you have to submit it and then you have to wait for them to revert back so Infosys generally revert back in ten to fifteen days by accepting your application so friends thanks a lot for watching this video in our next video will be coming with the in-depth analysis of the syllabus and more videos on Infosys preparation for timing friends subscribe our channel so that you get the update whenever any new of campus or on campus drive comes thank you friends
+
+Top Comments:
+Is there any minimum marks eligibility criteria?
+Sir it's showing email already existing but i didn't apply for Infosys earlier
+Sir how to apply 2019 students please reply me sir
+My college was not listed
+Sir any Percentage criteria?
+Sir I applied through this link one month ago but till now didn't get any notification.
+it's only for 2020 batch
+Wats the lst date to apply
+I already applied Dis form many times bt no mail come
+I completed..my BCA in 2016 and MCA in 2019.but year of completion in graduate section 2016 is not there and postgraduate section 2019 is not there then how can i apply?..
+What is the last day for the apply ?
+my college name is not there.
+Plz make video for internship sir...which company gives intership? And how to apply for internship
+It is not showing my college
+Sir,I tried to apply but it is showing please enter a valid email id...then what should I do?
+What is the role??
+I want to apply for this drive but, I don't have got my college name in the list. Please help me. College name is - Garware College Of Commerce, Pune.
+Any percentage criteria??
+I applied for the above drive but I didn't get any mail from them regarding the exam or drive so many online channels posted about this drive so many times @onlinestudy
+
+
+=== Capgemini pseudo codes explained from basic | Pseudo code basics for Capgemini ===
+https://youtube.com/watch?v=LetDyxLUFic
+
+Transcript:
+hello everybody and welcome to online story for you this is the cap so many pseudocode problems do and in this video we're going to see some pseudocode problems and there is an announcement for you guys to prepare for pseudocode for cab jimmy and also for aptitude problems let them get started with the video so the first question that we have today here is what will be printed after executing this code so this is the given code and these are the options so we have 0 5 15 and 25 as the options and we have a code that is given here we will analyze this code and then we will try to understand what is happening okay the first line we have int main so then then there are variables that they are having here is ijk and count so at the end of this count is being printed so that is a we need to keep an eye on count and what will be the value of this as the core progresses okay so initially count is equal to zero then for I is equal to zero I is less than Phi I plus plus so that is 5 times this outer loop will run okay and J is equal to 0 J is less than Phi J J plus plus 5 times the inner loop will run so that is 5 into 5 you will get 25 so 25 times this statement will get executed okay if you go by the normal programming terms that is the knowledge of pseudo code and know this is like a C program then you're printing count so if you think that is correct I'm afraid to tell you that you're wrong because this will not run 25 times okay so if you were to go back and answer Marcus age 25 you're wrong because you missed an important part here whenever you are trying to read pseudo code the important part that you miss is this semicolon here so this is a semicolon which means after coming here these statement in this block will not be executed that means all these statements will not be executed and the follow-up will try to execute five times the value of I will be initially 0 it will be 1 2 3 4 and when it becomes Phi this will exit out of here and go here and print count so this will not be executed at all this will be ignored and that is why the value of count initially which was saw assigned but it was zero and that is what we are going to get 0 as the output that is 0 will be printed ok so that is what the answer is option a 0 is the right answer okay so you should try to concentrate more and practice more problems in order to get the right answer for the given question so that is war what we are bringing is we are asking you that do you want to crack your interviews examinations for MNC companies yes you definitely want to so do you want to learn programming pseudocode questions easily yes you want to learn all these questions and programming problems so are you weak in solving aptitude problem you may be weak in solving aptitude problems you may want to crack some examinations then you do not need to worry because we have your back so we are presenting to you the online study for you materials that will cover aptitude material is a separate material and pseudocode material is a separate material ok so both will help you in achieving your goal and the link to buy this material at a very low cost is given in the description let me show you what this looks like ok so if you click on the links in the description this is the online study for you after good material buying page you will take will taken to insta module page so this is the amplitude and reasoning questions so this is 50 rupees which has 100 practice questions and previous your questions okay after 2 dialogical previously equations and hundred practice questions solutions have been provided by pratik sure and it is sufficient to crack Capgemini amplitude round for any stream student you may be computer science you may be a mechanical engineering or anything okay so you can buy this for 50 rupees amplitude material is separate so you can buy the pseudo-code material for 25 rupees so this will have 25 pages of questions that will cover 75 questions and you can buy this for 25 rupees which is very much less so you can use this material to practice and easily crack any examinations like cap Germany so this is very cheap for you guys we don't want you to charge we won't know how to charge you very much but this is required for creating the material so this is a mammal price that we are charging for you so go ahead and buy these two materials which you can you know use to prepare for your examinations okay so we will continue with our problems so this is the second problem this the last problem for this video so for more problems you can prefer our material please go to the link in the description and buy the materials second question is what is the meaning of the about line of code below line of code and this is a below line and these are the options that we have so the line of code is Walt sum int int so option is it is a submissive function which takes in two arguments some is a function which takes two IND arguments and returns void it will it will procedure a produce compilation error or you cannot comment on it so if you know the basics of programming the syntax of a function okay if you want to write a function the syntax for it is the return type okay so this is a very easy question so return type this is the function name okay and in the bracket you can have arguments okay now and this will be the end if you have a return statement you can mention the return statement so this is the function definition function definition yeah okay so that means you're defining how the function works here okay here if you want to in documents you need convention int a and int B okay on the other hand there is something called as function declaration okay in function declaration what happens is so here you have void that is nothing will be returned here you are - in documents but a and B are not mentioned so this is a function declaration it is given here so you will have your void return type you will have your function name as sum you can just mention that int + int are two arguments and you don't need to mention the names of variables that you need okay so because this is a function declaration here you are not going to tell what is happening in the function okay but he DC is a function definition this is the function declaration here you ought to give the variable names okay without that do not work it will produce error okay here this will properly work this is a declaration this means you're telling a compiler that there is a function called this but I'm not telling you how the function work here okay it is told here in the function definition that is why we can say that option B sum is a function which takes two int arguments and return void is the correct answer okay that is the end of this video thank you for watching this video and for more questions to solve aptitude and pseudocode problems please go through these links and you can buy this material for very the low price that will help you to crack examinations and interviews thank you for watching this video
+
+Top Comments:
+2:47 sir questions karwaane se pehle solve karke dekhiye khud se galat answer bata kar concept mat bigaddiye bachho ka yaha par semicolon outer loop mey hai to inner loop seprate block ki tarah work karenga and answer 5 aayenga you should compile the code and then saw the answer
+ans : 
+
+ 1)  5
+Free materials are not download
+As a civil student, muze kuch samaz mein nhi aya
+Sir can u make python video
+link is not working
+I think that only 2 questions are more than enough to practice pseudocode for capgemini 😅. Thanks a lot sir. 😆
+your ans is wrong. ans will be 5 .after terminating first loop then it continues to second loop and it will increase count by 5 so ans is 5
+Sir upload videos on hexaware
+count value should be 5
+please do not purches this material becuase they give many things wrong
+Sir I am very strong at pseudo code but I am very very at quants how should I prepare?
+Where to practise pseudo code? and which language it will be in?
+Count value should be 5. The second "for" loop will run which results in count being 5.
+Output for the first code is wrong, it will be 5. Do double check your answers before uploading videos, especially when those videos are on placement.
+I didn't received material
+1st code output will be 5. only first for loop wiIl not count but 2nd will count
+Sir.. yesterday Capgemini  test  was very easy... Your videos really helped me in these 1 month gap
+
+But 1 didn't get selected in Capgemini.. analyst position
+but they were selecting candidates based on English essay score. Means selected candidates will be moved to Psuedo code and those who are not.. they are told to wait on  conference hall
+My english essay went good too... 
+
+When we ask about it how they are evaluating ? Beside we haven't made any grammer or spelling mistakes
+
+One of their colleague told.. you have used too many backspaces 
+You shouldn't have use it
+
+Means the whole procedure for English essay is.. " in one line how many backspaces he/she uses "
+
+And finally after waiting for 1 hr in conference hall
+They shout out the names of candidates who were selected in aptitude for the role of *service desk*  and I was selected for the role
+
+
+So my Psuedo code is of no use through out the process.. beside I have invested alot of time to be good in Psuedo code.
+
+Their selection procedure is not good at all.
+got rejected 4th company in line :(
+i got output 5 for 1st code
+Sir is it enough to practice this pseudocode material ??
+Sir what about easy writing ?? is there any package available for easy writing section ....
+Awesome video. But tell me how to prepare for automata coding questions??
+Please sir make more video on psedocode
+Please make coding,aptitude,verbal and programming materials for all IT companies
+Is this material enough to get clear interview which is on Friday and I'm weak in aptitude so please tell me
+I’m from delhi 2020 batch..didn’t get any mail
+
