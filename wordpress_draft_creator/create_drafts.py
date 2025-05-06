@@ -1,11 +1,13 @@
 import os
 import sys
+from difflib import SequenceMatcher
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import requests
 from requests.auth import HTTPBasicAuth
 from utils.load_env import WORDPRESS_SITE, WORDPRESS_USER, WORDPRESS_APP_PASSWORD
-from competitor_scraper.fetch_jobs_from_apis import fetch_jobs_from_all_apis
+from competitor_scraper.fetch_jobs_from_all_apis import fetch_jobs_from_all_apis
 
 # ✅ Fetch all existing post titles (drafts + published)
 def fetch_existing_titles():
@@ -35,10 +37,22 @@ def fetch_existing_titles():
 
     return existing_titles
 
+# ✅ Fuzzy match: skip if similarity > threshold
+def is_similar(title, existing_titles, threshold=0.4):
+    for existing in existing_titles:
+        ratio = SequenceMatcher(None, title.lower(), existing).ratio()
+        if ratio >= threshold:
+            return True
+    return False
+
 # ✅ Create a single post
 def create_wordpress_draft(title, source_url, existing_titles):
-    if title.strip().lower() in existing_titles:
+    title_clean = title.strip().lower()
+    if title_clean in existing_titles:
         print(f"⏭️ Skipped (duplicate): {title}")
+        return
+    if is_similar(title_clean, existing_titles):
+        print(f"⏭️ Skipped (similar): {title}")
         return
 
     endpoint = f"{WORDPRESS_SITE}/wp-json/wp/v2/posts"
