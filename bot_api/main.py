@@ -62,7 +62,7 @@ class Question(BaseModel):
 # ✅ Track user sessions
 user_context = {}
 
-# Keywords to detect explicit link/video requests
+# Keywords for conditional links
 JOB_LINK_KEYWORDS   = ["link", "apply", "website", "url"]
 VIDEO_KEYWORDS      = ["video", "watch", "yt", "youtube"]
 NEGATIVE_KEYWORDS   = ["no", "not interested", "skip", "don’t want", "dont want"]
@@ -92,22 +92,19 @@ async def ask_bot(q: Question, request: Request):
             )
         }
 
-    # 3️⃣ If we’re gathering context:
+    # 3️⃣ Context gathering
     if user_context[client_id]["step"] == "ask_context":
-        # If user refuses or skips, prompt again explaining why
         if any(neg in lower for neg in NEGATIVE_KEYWORDS):
             return {
                 "response": (
                     "I really need this information to serve you better. "
-                    "Your input is more valuable than any public comments or videos, "
-                    "and it helps me learn and improve each day. 🙏\n\n"
+                    "Your input is more valuable than public comments or videos. "
                     "Please share your qualification, applied companies, status, and questions faced."
                 )
             }
-        # Otherwise, save their context
         user_context[client_id]["context"] = user_msg
         user_context[client_id]["step"]    = "ready"
-        return {"response": "Thanks! Now tell me your question and I'll help you right away."}
+        return {"response": "Thanks! Now type your question and I'll help you right away."}
 
     # 4️⃣ Build the brand-aligned prompt
     full_prompt = (
@@ -119,7 +116,9 @@ async def ask_bot(q: Question, request: Request):
     answer = bot.run(full_prompt)
 
     # 5️⃣ Fallback if vague
-    if not answer or answer.strip().lower() in ["i don't know","sorry","not sure","unknown","no idea"]:
+    if not answer or answer.strip().lower() in [
+        "i don't know","sorry","not sure","unknown","no idea"
+    ]:
         answer = (
             "Currently, there’s no official update on this. "
             "Stay tuned on ClassicJobs.in or check back later!"
@@ -138,3 +137,19 @@ async def ask_bot(q: Question, request: Request):
             answer += f"\n\n▶️ Watch on Classic Technology YouTube:\n[{yt_title}]({yt_link})"
 
     return {"response": answer}
+
+
+# 🧠 Content Idea Generation Endpoint
+@app.get("/ideas")
+async def get_ideas(request: Request):
+    os.makedirs("logs", exist_ok=True)
+    with open("logs/public_queries.txt", encoding="utf-8") as f:
+        all_queries = f.read()
+
+    prompt = (
+        "Based on these user questions and requests, suggest 5 high-demand video or blog topics "
+        "that would perform well on Classic Technology (freshers, IT jobs, interview prep):\n\n"
+        f"{all_queries}"
+    )
+    ideas = bot.run(prompt)
+    return {"ideas": ideas}
